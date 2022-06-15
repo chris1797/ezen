@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Hello World</title><!-- Tag, Element라고 한다. -->
+		<style type="text/css">
+			nav { color: blue;}
+			main { border:1px solid black; background-color: rgb(255,253,208);}
+			header { font-weight:bolder; font-size:x-large; }
+			footer {font-size: x-small; color: gray; background-color: #dddddd}
+			<!-- font-weight:속성의 이름, bolder:속성의 값 -->
+			/*
+			200
+			191
+			231
+			*/
+		</style>
+		<script type="text/javascript">
+			function test(msg) {
+				alert(msg);
+			}
+		</script>
+	</head>
+	<body>
+		<nav>메뉴들</nav>
+		<header>처음 만드는 웹페이지</header>
+		<main> <!-- 기능은 div태그와 차이가 없음, 가독성을 위한 태그 -->
+			<div>
+				<div> <!-- 블럭 요소  -->
+					A
+				</div>
+				<div>
+					B
+				</div><!-- 블럭 요소  -->
+				<p> <!-- 하나의 문단(하나의 공백라인이 생성) -->
+				<span>C</span>
+				<span>D</span>
+			</div>
+		</main> <!-- Semantic Tags -->
+		<footer>
+			Copyright..
+		</footer>
+		<p>
+		<button type="button" onclick="alert('고생했어요~');">눌러주세요~</button><!-- 태그들 사이를 '태그의 바디'라고 함 -->
+		<button type="button" onclick="test('점심시간입니다!');">눌러주세요~</button>
+	</body>
+</html>
+
+<!-- 
+	Block Element, Inline Element
+	Front-End Developer : html(구조), css(스타일), javascript(동적인 로직을 실행하기 위해서)
+	Back-End Developer : java, DB, python, Spring Frameworks
+ -->
