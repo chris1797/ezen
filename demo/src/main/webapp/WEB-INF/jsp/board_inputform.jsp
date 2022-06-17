@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="EUC-KR"%>
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,22 +19,21 @@
 </style>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script type="text/javascript">
-function add(){
-	var formdata = $('#input_form').serialize();
+function save() {
 	$.ajax({
-		url:'board',
+		url:'/board/save',
 		method:'post',
 		cache:false,
-		data:formdata,
+		data:$('#input_form').serialize(),
 		dataType:'json',
-		success:function(res){
-			alert(res.added ? 'ÀúÀå ¼º°ø' : 'ÀúÀå ½ÇÆĞ');
-			if(res.added){
-				location.href="board/save";
-			}
+		success:function(res){ //resëŠ” object
+				alert(res.saved ? 'ì €ì¥ì„±ê³µ' : res.msg); //res object ì•ˆì—ìˆëŠ” num
+			 if(!res.saved && res.msg){
+				 location.href="/user/login";
+			 }
 		},
-		error:function(request,status,err){
-			alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+		error:function(xhr,status,err){
+			alert(err);
 		}
 	});
 	return false;
@@ -43,21 +42,18 @@ function add(){
 </head>
 <body>
 <main>
-<h3>±ÛÀÛ¼º</h3>
+<h3>ê¸€ì‘ì„±</h3>
 <hr>
 <br>
-<form id="input_form" action="/board/save" onsubmit="return add();">
-<input type="hidden" name="cmd" value="write">
-<div>Á¦¸ñ : <input type="text" id="title" name="title"></div>
-<div>³»¿ë : <input type="text" id="contents" name="contents"></div>
-<!-- <div>ÀÛ¼ºÀÚ : <input type="text" id="author" name="author"></div>-->  
-<!--  <div>ÀÛ¼ºÀÏ : <input type="date" id="wdate" name="wdate"></div> -->
-<!--  <div>ºÎ¸ğ±Û : <input type="text" id="pcode" name="pcode"></div> -->
+<form id="input_form" method="post" action="/board/save" onsubmit="return save();">
+<input type="hidden" name="pcode" value="${board.pcode}">
+<div>ì œëª© : <input type="text" id="title" name="title"></div>
+<div>ë‚´ìš© : <input type="text" id="contents" name="contents"></div>
 <br>
 <hr>
 <div align="center">
-	<button type="submit">ÀÛ¼º</button>
-	<button><a href="?cmd=list">±Û¸ñ·Ï</a></button>
+	<button type="submit">ì‘ì„±</button>
+	<button><a href="?cmd=list">ê¸€ëª©ë¡</a></button>
 </div>
 </form>
 </main>

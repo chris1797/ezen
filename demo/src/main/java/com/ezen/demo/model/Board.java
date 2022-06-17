@@ -10,6 +10,11 @@ public class Board {
 	
 	
 	
+	@Override
+	public String toString() {
+		return String.format("%s|%s", title, contents);
+	}
+	
 	public int getNum() {
 		return num;
 	}
