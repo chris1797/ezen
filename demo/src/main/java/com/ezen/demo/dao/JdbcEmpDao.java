@@ -24,6 +24,7 @@ public class JdbcEmpDao {
 			emp.setEmpno(rs.getInt("EMPNO"));
 			emp.setEname(rs.getString("ENAME"));
 			emp.setHiredate(rs.getDate("HIREDATE"));
+			emp.setDeptno(rs.getInt("DEPTNO"));
 			emp.setSal(rs.getFloat("SAL"));
 			return emp;
 		});
@@ -32,12 +33,13 @@ public class JdbcEmpDao {
 	
 	
 	public List<Emp> getListByDeptno(int deptno){
-		String sql = "SELECT * FROM emp WHERE DEPTNO=?";
+		String sql = "SELECT * FROM emp2 WHERE DEPTNO=?";
 		List<Emp> list = jdbcTemplate.query(sql, (rs,i)->{ // 자동으로 List에 담아줌
 			Emp emp = new Emp();
 			emp.setEmpno(rs.getInt("EMPNO"));
 			emp.setEname(rs.getString("ENAME"));
 			emp.setHiredate(rs.getDate("HIREDATE"));
+			emp.setDeptno(rs.getInt("DEPTNO"));
 			emp.setSal(rs.getFloat("SAL"));
 			return emp;
 		}, deptno);
@@ -46,12 +48,13 @@ public class JdbcEmpDao {
 
 
 	public Emp getEmpById(int empno) {
-		String sql = "SELECT * FROM emp WHERE EMPNO=?";
+		String sql = "SELECT * FROM emp2 WHERE EMPNO=?";
 		List<Emp> list = jdbcTemplate.query(sql, (rs,i)->{ // 자동으로 List에 담아줌
 			Emp emp = new Emp();
 			emp.setEmpno(rs.getInt("EMPNO"));
 			emp.setEname(rs.getString("ENAME"));
 			emp.setHiredate(rs.getDate("HIREDATE"));
+			emp.setDeptno(rs.getInt("DEPTNO"));
 			emp.setSal(rs.getFloat("SAL"));
 			return emp;
 		}, empno);
@@ -60,14 +63,14 @@ public class JdbcEmpDao {
 
 
 	public boolean add(Emp emp) {
-		String sql = "INSERT INTO emp (EMPNO, ENAME, HIREDATE, SAL) VALUES(?,?,?,?)";
-		int result = jdbcTemplate.update(sql, emp.getEmpno(), emp.getEname(), emp.getHiredate(), emp.getSal());
+		String sql = "INSERT INTO emp2 (EMPNO, ENAME, HIREDATE, DEPTNO, SAL) VALUES(?,?,?,?,?)";
+		int result = jdbcTemplate.update(sql, emp.getEmpno(), emp.getEname(), emp.getHiredate(), emp.getDeptno(), emp.getSal());
 			
 		return result>0;
 	}
 	
 	public int addAndGetKey(Emp emp) {
-		String sql = "INSERT INTO emp (EMPNO, ENAME, HIREDATE, SAL) VALUES(?,?,?,?)";
+		String sql = "INSERT INTO emp2 (EMPNO, ENAME, HIREDATE, DEPTNO, SAL) VALUES(?,?,?,?,?)";
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		
 		jdbcTemplate.update(conn->{ 
@@ -76,16 +79,17 @@ public class JdbcEmpDao {
 				pstmt.setInt(1, emp.getEmpno());
 				pstmt.setString(2, emp.getEname());
 				pstmt.setDate(3, emp.getHiredate());
-				pstmt.setFloat(4, emp.getSal());
+				pstmt.setInt(4, emp.getDeptno());
+				pstmt.setFloat(5, emp.getSal());
 				return pstmt;
 		}, keyHolder);
 		return keyHolder.getKey().intValue();
 	}
 	
 	public boolean update(Emp emp) {
-		String sql = "UPDATE emp SET DEPTNO=?, SAL=? WHERE EMPNO=?";
+		String sql = "UPDATE emp2 SET DEPTNO=?, SAL=? WHERE EMPNO=?";
 		int result = jdbcTemplate.update(sql, emp.getDeptno(), emp.getSal(), emp.getEmpno());
-			
+		System.out.println(result);	
 		return result>0;
 	} 
 	

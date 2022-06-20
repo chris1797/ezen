@@ -1,14 +1,17 @@
 package com.ezen.demo.controller;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ezen.demo.dao.JdbcEmpDao;
 import com.ezen.demo.model.Emp;
@@ -34,9 +37,10 @@ public class JdbcEmpController {
 		return dao.getListByDeptno(20).toString();
 	}
 	
-	@GetMapping("/empno")
-	public String getEmp() {
-		return dao.getEmpById(1234).toString();
+	@GetMapping("/empno/{empno}")
+	public String getEmp(@PathVariable("empno")int empno, Model model) {
+		model.addAttribute("list", dao.getEmpById(empno));
+		return "empDetail";
 	}
 	
 	@GetMapping("/add")
@@ -63,22 +67,34 @@ public class JdbcEmpController {
 		return addedKey;
 	}
 	
-	@GetMapping("/update/{empno}/{deptno}/{sal}")
-	public String updateemp(@PathVariable("empno")int empno,
-			@PathVariable("deptno")int deptno, @PathVariable("sal")int sal, Model model) {
+	@PostMapping("/update/{empno}/{deptno}/{sal}")
+	@ResponseBody
+	public Map<String,Object> updateemp(@RequestParam("empno")int empno,
+			@RequestParam("deptno")int deptno, @RequestParam("sal")float sal) {
 		// gugu 때와 다르게 쓴건 이 Controller 전체가 jsp 없이 body로 쓰고 있어 model 객체를 받을 필요가 없음
-		Emp emp = new Emp();
-		emp.setEmpno(empno);
+		System.out.println(empno);
+		System.out.println(deptno);
+		System.out.println(sal);
+		Map<String,Object> map = new HashMap<String,Object>();
+		Emp emp = dao.getEmpById(empno);
 		emp.setDeptno(deptno);
 		emp.setSal(sal);
 		boolean updated = dao.update(emp);
-		return "update=" + updated;
+		map.put("updated", updated);
+		System.out.println(updated);
+		return map;
 	}
 	
 	@GetMapping("/delete") /* delete?empno=7369 */
 	public String delete(@RequestParam("empno")int empno) {
 		boolean deleted = dao.delete(empno);
 		return "deleted=" + deleted;
+	}
+	
+	@GetMapping("/edit/{empno}")
+	public String edit(@PathVariable("empno")int empno, Model model) {
+		model.addAttribute("emp", dao.getEmpById(empno));
+		return "empEdit";
 	}
 	
 }
