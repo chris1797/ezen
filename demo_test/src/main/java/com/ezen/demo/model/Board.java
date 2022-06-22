@@ -1,5 +1,8 @@
 package com.ezen.demo.model;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class Board {
 	private int num;
 	private String title;
