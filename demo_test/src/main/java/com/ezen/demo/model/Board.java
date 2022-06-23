@@ -7,7 +7,7 @@ public class Board {
 	private int num;
 	private String title;
 	private String contents;
-	private String author = "Chris";
+	private String author;
 	private java.sql.Date wdate;
 	private int pcode;
 	

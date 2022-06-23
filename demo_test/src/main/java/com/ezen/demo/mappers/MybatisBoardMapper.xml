@@ -4,7 +4,7 @@
 <mapper namespace="com.ezen.demo.mappers.MybatisBoardMapper">
 	
 	<select id="getListAll" resultType="com.ezen.demo.model.Board">
-		SELECT num, LPAD('ㅤ└', (LEVEL-1)*3, 'ㅤ')||title AS title, wdate, pcode FROM BOARD
+		SELECT num, LPAD('ㅤ└', (LEVEL-1)*3, 'ㅤ')||title AS title, wdate, author, pcode FROM BOARD
 					START WITH pcode=0
 					CONNECT BY PRIOR num=pcode
 					ORDER SIBLINGS BY wdate DESC
@@ -25,4 +25,16 @@
 	<delete id="remove" parameterType="Integer">
 		DELETE FROM board WHERE num=#{num}
 	</delete>
+	
+	<select id="searchlist" parameterType="map" resultType="com.ezen.demo.model.Board">
+		SELECT * FROM BOARD WHERE
+		<choose>
+			<when test='category.equalsIgnoreCase("author")'>
+				author LIKE '%'||#{keyword}||'%'
+			</when>
+			<when test='category.equalsIgnoreCase("title")'>
+				title LIKE '%'||#{keyword}||'%'
+			</when>
+		</choose>
+	</select>
 </mapper>

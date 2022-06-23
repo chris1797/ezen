@@ -16,5 +16,6 @@ public interface MybatisBoardMapper {
 
 	Board getBoardByNum(int num);
 	List<Board> getListAll();
+	List<Board> searchlist(Map<String, String> map);
 
 }

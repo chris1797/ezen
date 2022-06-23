@@ -9,8 +9,8 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script type="text/javascript">
 
-	function search(page){
-		$('#page').val(page);
+	function search(i){
+		$('#page').val(i);
 		$('#search_form').submit();
 	}
 	
@@ -53,10 +53,11 @@
 		<input type="radio" id="category" name="category" value="author">
 		<label>제목으로 검색 </label>
 		<input type="radio" id="category" name="category" value="title">
+		
 	</div>
 	<div>
 		<label>검색어</label>
-		 <input type="text" id="keyword" name="keyword">
+		 <input type="text" id="keyword" name="keyword" value="${keyword}">
 		<button type="submit">검색</button>
 		<button type="reset">취소</button>
 	</div>
@@ -66,7 +67,7 @@
 				[${i}]
 			</c:when>
 			<c:otherwise>
-				[<a href="/mybatis/board/${i}">${i}</a>]
+				[<a href="javascript:search(${i})">${i}</a>]
 			</c:otherwise>
 		</c:choose>
 </c:forEach>
