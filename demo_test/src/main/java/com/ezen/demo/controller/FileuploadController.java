@@ -61,6 +61,7 @@ public class FileuploadController {
 	             fileupload.setFname(mfiles[i].getOriginalFilename());
 	             uploadlist.add(fileupload);
 	          }
+	          
 	          boolean uploaded = dao.upload(uploadlist);
 	          
 	          String msg = String.format("파일(%d)개 저장성공(작성자:%s)", mfiles.length,fileupload.getWriter());
