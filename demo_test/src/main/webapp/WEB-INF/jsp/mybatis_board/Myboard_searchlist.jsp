@@ -1,6 +1,6 @@
 <%@ page import="java.util.List" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page contentType="text/html; charset=EUC-KR" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -50,9 +50,11 @@
 <br>
 	<div>
 		<label>작성자로 검색</label>
-		<input type="radio" id="category" name="category" value="author">
+		<input type="radio" id="category" name="category" value="author"
+		<c:if test="${category=='author'}">checked</c:if>>
 		<label>제목으로 검색 </label>
-		<input type="radio" id="category" name="category" value="title">
+		<input type="radio" id="category" name="category" value="title"
+		<c:if test="${category=='title'}">checked</c:if>>
 		
 	</div>
 	<div>
