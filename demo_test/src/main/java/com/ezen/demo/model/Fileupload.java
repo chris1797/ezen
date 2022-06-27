@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Fileupload {
 	private int num;
+	private int pnum;
 	private String writer;
 	private java.sql.Date udate;
 	private String comments;
@@ -47,6 +48,12 @@ public class Fileupload {
 	}
 	public void setFpath(String fpath) {
 		this.fpath = fpath;
+	}
+	public int getPnum() {
+		return pnum;
+	}
+	public void setPnum(int pnum) {
+		this.pnum = pnum;
 	}
 	
 	

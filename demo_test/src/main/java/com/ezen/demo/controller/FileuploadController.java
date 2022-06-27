@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,19 +37,22 @@ public class FileuploadController {
 	
 	@PostMapping("/upload")
 	   @ResponseBody
-	   public String upload(@RequestParam("files")MultipartFile[] mfiles, 
+	   public String upload(@RequestParam("files")MultipartFile[] mfiles,
 			   				HttpServletRequest request,
 			   				Fileupload fileupload) {
 	      ServletContext context = request.getServletContext();
 	      String savePath = context.getRealPath("/WEB-INF/files");
 	      
-	      List<Fileupload> uploadlist = new ArrayList<>();
 	      try {
+	    	  //업로드
+	    	  dao.insertUpload(fileupload);
+	    	  System.out.println(fileupload.getNum());
+	    	  
 	          for(int i=0;i<mfiles.length;i++) {
-	         	 String[] token = mfiles[i].getOriginalFilename().split("\\.");
-	         	String pName = token[0] + System.nanoTime() + "." + token[1];
+//	         	 String[] token = mfiles[i].getOriginalFilename().split("\\.");
+//	         	 String pName = token[0] + System.nanoTime() + "." + token[1];
 	             mfiles[i].transferTo( // 메모리에 있는 파일을 저장경로에 옮기는 method, local 디렉토리에 있는 그 파일만 셀렉가능
-	               new File(savePath+"/"+pName));
+	               new File(savePath+"/"+mfiles[i].getOriginalFilename()));
 //	             MultipartFile 주요 메소드
 //	             String cType = mfiles[i].getContentType();
 //	             String pName = mfiles[i].getName();
@@ -57,21 +61,30 @@ public class FileuploadController {
 	             
 //	             boolean empty = mfiles[i].isEmpty();
 //	             
-	             fileupload.setFpath(savePath);
-	             fileupload.setFname(mfiles[i].getOriginalFilename());
-	             uploadlist.add(fileupload);
+//	             fileupload.setFname(mfiles[i].getOriginalFilename());
 	          }
 	          
-	          boolean uploaded = dao.upload(uploadlist);
+	          
+	          for(int i=0; i<mfiles.length; i++	) {
+	        	  int key = fileupload.getNum();
+	        	  String pname = mfiles[i].getOriginalFilename();
+	        	  fileupload.setPnum(key);
+	        	  fileupload.setFname(pname);
+	        	  fileupload.setFpath(savePath);
+	        	  dao.insertAttach(fileupload);
+	          }
 	          
 	          String msg = String.format("파일(%d)개 저장성공(작성자:%s)", mfiles.length,fileupload.getWriter());
-	          for(int i=0; i<mfiles.length; i++) {
-	         	 msg += String.format("<div>파일명 : %s / 사이즈(Byte) : %d</div>", mfiles[i].getOriginalFilename(), mfiles[i].getSize());
-	          }
 	          return msg;
 	       } catch (Exception e) {
 	          e.printStackTrace();
 	          return "파일 저장 실패:";
 	       }
+	}
+	
+	@GetMapping("/list")
+	public String getList(Model model) {
+		model.addAttribute("list", dao.getList());
+		return "fileupload/fileupload_list";
 	}
 }
