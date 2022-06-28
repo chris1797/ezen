@@ -1,6 +1,7 @@
 package com.ezen.demo.mappers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -9,10 +10,12 @@ import com.ezen.demo.model.Fileupload;
 @Mapper
 public interface FileuploadMapper {
 
-	boolean insertUpload(Fileupload uploadlist);
+	int insertUpload(Fileupload vo);
 	
-	boolean insertAttach(Fileupload uploadlist);
+	int insertAttach(Map<String, Object> map);
 
-	List<Fileupload> getList();
+	List<Map<String, Object>> getList();
+	
+	String getFname(int num);
 
 }

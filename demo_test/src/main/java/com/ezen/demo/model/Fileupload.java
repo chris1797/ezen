@@ -1,18 +1,20 @@
 package com.ezen.demo.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 @Component
-public class Fileupload {
+public class Fileupload 
+{
 	private int num;
-	private int pnum;
 	private String writer;
 	private java.sql.Date udate;
 	private String comments;
-	private String fname;
 	private String fpath;
-	
-	
+	private List<AttachVO> attach = new ArrayList<>(); //첨부파일명
+
 	public int getNum() {
 		return num;
 	}
@@ -31,17 +33,18 @@ public class Fileupload {
 	public void setUdate(java.sql.Date udate) {
 		this.udate = udate;
 	}
+	
+	public List<AttachVO> getAttach() {
+		return attach;
+	}
+	public void setAttach(List<AttachVO> fnames) {
+		this.attach = fnames;
+	}
 	public String getComments() {
 		return comments;
 	}
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
-	public String getFname() {
-		return fname;
-	}
-	public void setFname(String fname) {
-		this.fname = fname;
+	public void setComments(String description) {
+		this.comments = description;
 	}
 	public String getFpath() {
 		return fpath;
@@ -49,12 +52,5 @@ public class Fileupload {
 	public void setFpath(String fpath) {
 		this.fpath = fpath;
 	}
-	public int getPnum() {
-		return pnum;
-	}
-	public void setPnum(int pnum) {
-		this.pnum = pnum;
-	}
-	
 	
 }

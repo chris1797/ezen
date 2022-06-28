@@ -1,28 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ezen.demo.mappers.FileuploadMapper">
-
-<insert id="insertUpload" parameterType="com.ezen.demo.model.Fileupload">
-<!-- <selectKey> 안에 있는 SELECT 문장이 먼저(BEFORE) 실행되어 upload_num.NEXTVAL 값이 추출되어 keyProperty="num" 으로 지시되는 UploadVO.num 에 할당된다.-->
-      <selectKey keyProperty="num" resultType="integer" order="BEFORE">
-      <!--  시퀀스 값을 가져오는 것 -->
-          	SELECT upload_num.NEXTVAL FROM DUAL
-      </selectKey>
-			INSERT INTO upload_tb(num, writer, udate, comments) VALUES(#{num}, #{writer}, sysdate, #{comments})
-</insert>
-
-<insert id="insertAttach" parameterType="com.ezen.demo.model.Fileupload">
-			INSERT INTO attach_tb(num, pnum, fname, fpath) VALUES(attach_num.NEXTVAL, #{pnum}, #{fname}, #{fpath})
-</insert>
-
-<select id="getList" resultType="com.ezen.demo.model.Fileupload">
-	SELECT upload_tb.num, upload_tb.writer, upload_tb.comments, attach_tb.fname 
-  	  FROM attach_tb
-     INNER JOIN upload_tb
-        ON upload_tb.num = attach_tb.pnum
-</select>
-
+	<mapper namespace="com.ezen.demo.mappers.FileuploadMapper">
+	
+	<insert id="insertUpload" parameterType="com.ezen.demo.model.Fileupload">
+	<!-- <selectKey> 안에 있는 SELECT 문장이 먼저(BEFORE) 실행되어 upload_num.NEXTVAL 값이 추출되어 keyProperty="num" 으로 지시되는 UploadVO.num 에 할당된다.-->
+	      <selectKey keyProperty="num" resultType="integer" order="BEFORE">
+	      <!--  시퀀스 값을 가져오는 것 -->
+	          	SELECT upload_num.NEXTVAL FROM DUAL
+	      </selectKey>
+				INSERT INTO upload_tb(num, writer, udate, comments) 
+				VALUES(#{num}, #{writer}, sysdate, #{comments})
+	</insert>
+	
+	<insert id="insertAttach" parameterType="map">
+				INSERT INTO attach_tb(num, pnum, fname, fpath) 
+				VALUES(attach_num.NEXTVAL, #{pnum}, #{fname}, #{fpath})
+	</insert>
+	
+	<select id="getList" resultType="map">
+				SELECT u.num 
+				    AS num, writer, udate, comments, a.num 
+				    AS fnum, pnum, fname
+				  FROM upload_tb u 
+		    INNER JOIN attach_tb a 
+		            ON u.num=a.pnum
+	</select>
+	
+	<select id="getFname" parameterType="Integer" resultType="String">
+				SELECT fname
+				  FROM attach_tb
+				 WHERE num=#{num}
+	</select>
 
 
 
