@@ -1,5 +1,10 @@
 package com.ezen.demo.model;
 
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+@Component
 public class AttachVO {
 	private int num;
 	private int pnum;
@@ -31,6 +36,4 @@ public class AttachVO {
 	public void setFpath(String fpath) {
 		this.fpath = fpath;
 	}
-	
-	
 }

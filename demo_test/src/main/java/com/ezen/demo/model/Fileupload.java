@@ -1,24 +1,19 @@
 package com.ezen.demo.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
 @Component
-public class Fileupload {
+public class Fileupload 
+{
 	private int num;
 	private String writer;
 	private java.sql.Date udate;
 	private String comments;
 	private String fpath;
-	private List<AttachVO> fname = new ArrayList<>(); //첨부파일 명
-	//List<String> -> List<AttachVO> 로 변경
-	private int pnum; // AttachVO로 담김
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.num, this.num);
-	}
+	private List<AttachVO> attach = new ArrayList<>(); //첨부파일명
 	
 	@Override
 	public boolean equals(Object obj) {
@@ -26,7 +21,11 @@ public class Fileupload {
 		return this.num == other.num;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return String.format("%d\t%s\t%s", num, writer, udate);
+	}
+
 	public int getNum() {
 		return num;
 	}
@@ -45,32 +44,24 @@ public class Fileupload {
 	public void setUdate(java.sql.Date udate) {
 		this.udate = udate;
 	}
+	
+	public List<AttachVO> getAttach() {
+		return attach;
+	}
+	public void setAttach(List<AttachVO> fnames) {
+		this.attach = fnames;
+	}
 	public String getComments() {
 		return comments;
 	}
-	public void setComments(String comments) {
-		this.comments = comments;
+	public void setComments(String description) {
+		this.comments = description;
 	}
-	public List<AttachVO> getFname() {
-		return fname;
-	}
-	public void setFname(List<AttachVO> fname) {
-		this.fname = fname;
-	}
-	
 	public String getFpath() {
 		return fpath;
 	}
 	public void setFpath(String fpath) {
 		this.fpath = fpath;
 	}
-	public int getPnum() {
-		return pnum;
-	}
-	public void setPnum(int pnum) {
-		this.pnum = pnum;
-	}
-	
-	
 	
 }

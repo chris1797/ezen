@@ -8,13 +8,18 @@ import org.apache.ibatis.annotations.Mapper;
 import com.ezen.demo.model.Fileupload;
 
 @Mapper
-public interface FileuploadMapper 
-{
+public interface FileuploadMapper {
+
 	int insertUpload(Fileupload vo);
 	
 	int insertAttach(Map<String, Object> map);
-	
+
 	List<Map<String, Object>> getList();
 	
 	String getFname(int num);
+
+	List<Map<String, Object>> getDetailByNum(int num);
+
+	int remove(int num);
+
 }

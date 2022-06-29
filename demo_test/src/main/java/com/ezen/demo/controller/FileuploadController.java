@@ -1,17 +1,22 @@
 package com.ezen.demo.controller;
 
 import java.io.File;
-import java.sql.Timestamp;
+import java.io.IOException;
 import java.util.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +35,7 @@ public class FileuploadController {
 	@Autowired
 	ResourceLoader resourceLoader;
 	
+	
 	@Autowired
 	private FileuploadService svc;
 	
@@ -42,42 +48,41 @@ public class FileuploadController {
 	   @ResponseBody
 	   public String upload(@RequestParam("files")MultipartFile[] mfiles,
 			   				HttpServletRequest request,
-			   				Fileupload fileupload,
-			   				AttachVO attach) {
+			   				Fileupload vo) {
 	      ServletContext context = request.getServletContext();
 	      String savePath = context.getRealPath("/WEB-INF/files");
-			
-	      attach.setFpath(savePath);
-			
-			/* static/upload 디렉토리에 업로드하려면, 아래처럼 절대경로를 구하여 사용하면 된다
-			* Resource resource = resourceLoader.getResource("classpath:/static");
-			* String absolutePath = resource.getFile().getAbsolutePath();
-			*/ 
+	      
+	      vo.setFpath(savePath);
+	      
+	      List<AttachVO> attList = new ArrayList<>();
 			try {
-				for(int i=0;i<mfiles.length;i++) {
-					
-					String fname_orign = mfiles[i].getOriginalFilename();
-					String[] token = fname_orign.split("\\.");
-					String fname_changed = token[0]+System.nanoTime()+"."+token[1];
-					
-					
-					mfiles[i].transferTo(
-					  new File(savePath+"/"+fname_changed));
-					
-					attach.setFname(fname_changed);
-					/* MultipartFile 주요 메소드
-					String cType = mfiles[i].getContentType();
-					String pName = mfiles[i].getName();
-					Resource res = mfiles[i].getResource();
-					long fSize = mfiles[i].getSize();
-					boolean empty = mfiles[i].isEmpty();
-					*/
+				// 업로드
+
+				for (int i = 0; i < mfiles.length; i++) {
+					String[] token = mfiles[i].getOriginalFilename().split("\\.");
+					String fname_changed = token[0] + System.nanoTime() + "." + token[1];
+					AttachVO att = new AttachVO();
+					att.setFname(fname_changed);
+					att.setFpath(savePath);
+					attList.add(att);
+
+					mfiles[i].transferTo( // 메모리에 있는 파일을 저장경로에 옮기는 method, local 디렉토리에 있는 그 파일만 셀렉가능
+							new File(savePath + "/" + mfiles[i].getOriginalFilename()));
+//	             MultipartFile 주요 메소드
+//	             String cType = mfiles[i].getContentType();
+//	             String pName = mfiles[i].getName();
+//	             Resource res = mfiles[i].getResource();
+//	             long fSize = mfiles[i].getSize();
+
+//	             boolean empty = mfiles[i].isEmpty();
+//	             
+//	             fileupload.setFname(mfiles[i].getOriginalFilename());
 				}
-				//String msg = String.format("파일(%d)개 저장성공(작성자:%s)", mfiles.length,author);
-				
-				boolean inserted = svc.insert(fileupload);
-				
-				return "inserted=" + inserted;
+				vo.setAttach(attList);
+				svc.insert(vo);
+
+				String msg = String.format("파일(%d)개 저장성공(작성자:%s)", mfiles.length, vo.getWriter());
+				return msg;
 			} catch (Exception e) {
 				e.printStackTrace();
 				return "파일 저장 실패:";
@@ -86,13 +91,64 @@ public class FileuploadController {
 	
 	@GetMapping("/list")
 	public String getList(Model model) {
-		//model.addAttribute("vo.fnames", );
-		// 행 중복을 제거하려면 view에 보내기 전에 가공이 필요
-		// List<Map<String, Object>> list = dao.getList();
-		// list를 loof돌려서 넣어야 함
-		// > List<Fileupload> list = dao.getList();
-		List<AttachVO> list = svc.getList();
+		List<Fileupload> list = svc.getList();
 		model.addAttribute("list", list);
 		return "fileupload/fileupload_list";
 	}
+	
+	@GetMapping("/download/{num}")
+	public ResponseEntity<Resource> download(HttpServletRequest request, @PathVariable int num) {
+		String filename = svc.getFname(num);
+		Resource resource = resourceLoader.getResource("WEB-INF/files/" + filename);
+		System.out.println("파일명:" + resource.getFilename());
+		String contentType = null;
+		try {
+			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+			//System.out.println(contentType); // return : image/jpeg
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		if (contentType == null) {
+			contentType = "application/octet-stream";
+		}
+
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+				// HttpHeaders.CONTENT_DISPOSITION는 http header를 조작하는 것, 화면에 띄우지 않고 첨부화면으로
+				// 넘어가게끔한다
+				// filename=\"" + resource.getFilename() + "\"" 는 http프로토콜의 문자열을 고대로 쓴 것
+				.body(resource);
+	}
+	
+	@GetMapping("/detail/{num}")
+	public String getDetail(Model model,
+							@PathVariable int num) {
+		List<Fileupload> list = svc.getDetailByNum(num);
+		model.addAttribute("list", list);
+		return "fileupload/fileupload_detail";
+	}
+	
+	@PostMapping("/remove/{num}")
+	@ResponseBody
+	public Map<String, Object> remove(@PathVariable("num") int num){
+		Map<String,Object> map = new HashMap<String, Object>();
+		
+		String filename = svc.getFname(num);
+		Resource resource = resourceLoader.getResource("WEB-INF/files/" + filename);
+		//sysout(resource) return : ServletContext resource [/WEB-INF/files/JSP & Servlet.JPG]
+		try {
+			File file = new File(resource.getFile().getAbsolutePath() +File.separator);
+			System.out.println(file);
+			boolean removed = file.delete();
+			System.out.println("file delete check : " + removed);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		boolean removed = svc.remove(num);
+		map.put("removed", removed);
+		return map;
+	}
+	
 }

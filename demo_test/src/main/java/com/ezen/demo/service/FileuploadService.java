@@ -1,12 +1,9 @@
 package com.ezen.demo.service;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.sql.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,39 +18,49 @@ public class FileuploadService
 	@Autowired
 	private FileuploadMapper dao;
 
-	public boolean insert(Fileupload vo) 
-	{
+	public boolean insert(Fileupload vo) {
 		dao.insertUpload(vo);    //upload_tb에 저장
 		int pnum = vo.getNum();  // 자동 증가된 업로드 번호를 받음
 		
-		List<AttachVO> attList = vo.getFname();
+		List<AttachVO> attList = vo.getAttach();
 
 		int totalSuccess = 0;
-		for(int i=0;i<attList.size();i++) {
+		for(int i=0;i<attList.size();i++)
+		{
 			Map<String,Object> fmap = new HashMap<>();
 			fmap.put("pnum", Integer.valueOf(pnum));
-			fmap.put("fname", attList.get(i));
+			fmap.put("fname", attList.get(i).getFname());
 			fmap.put("fpath", vo.getFpath());
 			totalSuccess += dao.insertAttach(fmap);   // 첨부파일 정보 저장
 		}
 		return totalSuccess==attList.size();
 	}
 	
-	public List<AttachVO> getList(){
-		List<Map<String, Object>> list = dao.getList();
-		List<AttachVO> attvoList = new ArrayList<>();
+	public List<Fileupload> getList() {
+		List<Map<String,Object>> list = dao.getList();
+		List<Fileupload> volist = new ArrayList<>();
+		
 		for(int i=0; i<list.size(); i++) {
 			Map<String, Object> map = list.get(i);
 			
-			int nums = ((BigDecimal)map.get("NUM")).intValue();
-			String fnames = (String) map.get("FNAME");
+			String fname = (String) map.get("FNAME");
 			
-			AttachVO attvo = new AttachVO();
+			
+			AttachVO attvo = null;
+			
+			if(fname != null) {
+				attvo = new AttachVO();
+				int fnum = ((BigDecimal)map.get("FNUM")).intValue();
+				attvo.setNum(fnum);
+				attvo.setFname(fname);
+			}
+			
 			Fileupload vo = new Fileupload();
-			vo.setNum(nums);
+			int num = ((BigDecimal)map.get("NUM")).intValue();
+			vo.setNum(num);
 			
-			if(attvoList.contains(vo)) {
-				attvoList.get(attvoList.size()-1).setFname(fnames);
+			if(volist.contains(vo)) {
+				volist.get(volist.size()-1).getAttach().add(attvo);
 			} else {
 				String writer = (String) map.get("WRITER");
 				Date udate = new Date(((Timestamp)map.get("UDATE")).getTime());
@@ -62,13 +69,62 @@ public class FileuploadService
 				vo.setWriter(writer);
 				vo.setUdate(udate);
 				vo.setComments(comments);
-				attvo.setFname(fnames);
+				vo.getAttach().add(attvo);
 				
-				attvoList.add(attvo);
+				volist.add(vo);
 			}
 		}
-		return attvoList;
+		return volist;
 	}
 
+	public String getFname(int num) {
+		String fname = dao.getFname(num);
+		return fname;
+	}
+
+	public List<Fileupload> getDetailByNum(int num) {
+		List<Map<String,Object>> list = dao.getDetailByNum(num);
+		List<Fileupload> volist = new ArrayList<>();
+		
+		for(int i=0; i<list.size(); i++) {
+			Map<String, Object> map = list.get(i);
+			
+			int unum = ((BigDecimal)map.get("NUM")).intValue();
+			int fnum = ((BigDecimal)map.get("FNUM")).intValue();
+			String fname = (String) map.get("FNAME");
+			
+			
+			AttachVO attvo = null;
+			if(fname != null) {
+			attvo = new AttachVO();
+			attvo.setNum(fnum);
+			attvo.setFname(fname);
+			}
+			
+			Fileupload vo = new Fileupload();
+			vo.setNum(unum);
+			
+			if(volist.contains(vo)) {
+				volist.get(volist.size()-1).getAttach().add(attvo);
+			} else {
+				String writer = (String) map.get("WRITER");
+				Date udate = new Date(((Timestamp)map.get("UDATE")).getTime());
+				String comments = (String) map.get("COMMENTS");
+				
+				vo.setWriter(writer);
+				vo.setUdate(udate);
+				vo.setComments(comments);
+				vo.getAttach().add(attvo);
+				
+				volist.add(vo);
+			}
+		}
+		return volist;
+	}
+
+	public boolean remove(int num) {
+		int removed = dao.remove(num);
+		return removed > 0;
+	}
 
 }

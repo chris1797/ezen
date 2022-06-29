@@ -8,10 +8,10 @@
 <title>파일 목록</title>
 <style type="text/css">
 	main { width:fit-content; margin:0 auto; }
-	main>h3 { width:fit-content; margin:10px auto; text-align: center;}
-	table { border:1px solid black; width:500px; border-spacing:0; border-collapse: collapse;}
-	th,td { border-right: 1px dashed black; text-align:center;}
-	td {border-right: 1px dashed black; text-align:center;}
+	main>h3 { width:fit-content; margin:10px auto; }
+	table { border:1px solid black; width:800px; border-spacing:0; border-collapse: collapse;}
+	th,td { width:fit-content; border-right: 1px dashed black; text-align:center; height:30px;}
+	td {width:fit-content; border-right: 1px dashed black; text-align:left;}
 	th:last-child(), td:last-child() { border-right:none; }
 	th {background-color: #7bcabe; border-bottom:3px double black; }
 	tr:nth-child(odd) {background-color:#eee;}
@@ -24,16 +24,18 @@
 <main>
 <h3>파일목록</h3>
 <table>
-<tr><th>글번호</th><th>글쓴이</th><th>날짜</th><th>설명</th><th>파일명</th></tr>
+<tr><th>No.</th><th>글쓴이</th><th>작성일</th><th>설명</th><th>첨부</th></tr>
 <c:forEach var="f" items="${list}">
 <tr>
-<td>${f.num}</td>
+<td>
+	<a href="detail/${f.num}">${f.num}</a>
+</td>
 <td>${f.writer}</td>
 <td>${f.udate}</td>
 <td>${f.comments}</td>
 <td>
 	<c:forEach var="aVO" items="${f.attach}">
-		<a href="/filesupload/download/${aVO.num}">${aVO.fname}</a>
+		<a href="download/${aVO.num}">${aVO.fname}</a>
 	</c:forEach>
 </td>
 </tr>
