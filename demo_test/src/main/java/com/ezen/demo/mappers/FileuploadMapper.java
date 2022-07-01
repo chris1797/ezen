@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.ezen.demo.model.AttachVO;
 import com.ezen.demo.model.Fileupload;
 
 @Mapper
@@ -12,7 +13,7 @@ public interface FileuploadMapper {
 
 	int insertUpload(Fileupload vo);
 	
-	int insertAttach(Map<String, Object> map);
+	int insertAttach(AttachVO att);
 
 	List<Map<String, Object>> getList();
 	
@@ -21,5 +22,13 @@ public interface FileuploadMapper {
 	List<Map<String, Object>> getDetailByNum(int num);
 
 	int remove(int num);
+	
+	int insertMultiAttach(List<AttachVO> list);
+
+	List<String> getAttachByPnum(int num);
+
+	int deleteAttInfo(int num);
+
+	int deleteUpload(int num);
 
 }

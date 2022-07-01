@@ -27,6 +27,7 @@ import com.ezen.demo.mappers.FileuploadMapper;
 import com.ezen.demo.model.AttachVO;
 import com.ezen.demo.model.Fileupload;
 import com.ezen.demo.service.FileuploadService;
+import oracle.jdbc.driver.json.tree.JsonpPrimitive.JsonpNumberImpl;
 
 @Controller
 @RequestMapping("/filesupload")
@@ -45,48 +46,47 @@ public class FileuploadController {
 	}
 	
 	@PostMapping("/upload")
-	   @ResponseBody
-	   public String upload(@RequestParam("files")MultipartFile[] mfiles,
-			   				HttpServletRequest request,
-			   				Fileupload vo) {
-	      ServletContext context = request.getServletContext();
-	      String savePath = context.getRealPath("/WEB-INF/files");
-	      
-	      vo.setFpath(savePath);
-	      
-	      List<AttachVO> attList = new ArrayList<>();
-			try {
-				// 업로드
+	@ResponseBody
+	public String upload(@RequestParam("files") MultipartFile[] mfiles,
+						@RequestParam(name = "pnum", defaultValue = "0") int pnum, 
+						HttpServletRequest request, 
+						Fileupload vo) {
+		
+		System.out.println("pnum = " + pnum);
+		System.out.println("writer = " + vo.getWriter());
+		ServletContext context = request.getServletContext();
+		String savePath = context.getRealPath("/WEB-INF/files");
 
-				for (int i = 0; i < mfiles.length; i++) {
-					String[] token = mfiles[i].getOriginalFilename().split("\\.");
-					String fname_changed = token[0] + System.nanoTime() + "." + token[1];
-					AttachVO att = new AttachVO();
-					att.setFname(fname_changed);
-					att.setFpath(savePath);
-					attList.add(att);
+		vo.setFpath(savePath);
 
-					mfiles[i].transferTo( // 메모리에 있는 파일을 저장경로에 옮기는 method, local 디렉토리에 있는 그 파일만 셀렉가능
-							new File(savePath + "/" + mfiles[i].getOriginalFilename()));
-//	             MultipartFile 주요 메소드
-//	             String cType = mfiles[i].getContentType();
-//	             String pName = mfiles[i].getName();
-//	             Resource res = mfiles[i].getResource();
-//	             long fSize = mfiles[i].getSize();
+		List<AttachVO> attList = new ArrayList<>();
+		try {
+			// 업로드
 
-//	             boolean empty = mfiles[i].isEmpty();
-//	             
-//	             fileupload.setFname(mfiles[i].getOriginalFilename());
-				}
-				vo.setAttach(attList);
-				svc.insert(vo);
+			for (int i = 0; i < mfiles.length; i++) {
+				// mfiles 파일명 수정
+				String[] token = mfiles[i].getOriginalFilename().split("\\.");
+				String fname_changed = token[0] + System.nanoTime() + "." + token[1];
+				
+				//attach 객체 만들어서 가공
+				AttachVO att = new AttachVO();
+				att.setPnum(pnum);
+				att.setFname(fname_changed);
+				att.setFpath(savePath);
+				
+				attList.add(att);
 
-				String msg = String.format("파일(%d)개 저장성공(작성자:%s)", mfiles.length, vo.getWriter());
-				return msg;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return "파일 저장 실패:";
+				mfiles[i].transferTo( // 메모리에 있는 파일을 저장경로에 옮기는 method, local 디렉토리에 있는 그 파일만 셀렉가능
+						new File(savePath + "/" + fname_changed));
 			}
+			vo.setAttach(attList);
+			boolean inserted = svc.insert(vo);
+//			String msg = String.format("파일(%d)개 저장성공(작성자:%s)", mfiles.length, vo.getWriter());
+			return "{\"inserted\":" + inserted +"}";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "{\"inserted\":" + false +"}";
+		}
 	}
 	
 	@GetMapping("/list")
@@ -124,8 +124,8 @@ public class FileuploadController {
 	@GetMapping("/detail/{num}")
 	public String getDetail(Model model,
 							@PathVariable int num) {
-		List<Fileupload> list = svc.getDetailByNum(num);
-		model.addAttribute("list", list);
+		Fileupload vo = svc.getDetailByNum(num);
+		model.addAttribute("vo", vo);
 		return "fileupload/fileupload_detail";
 	}
 	
@@ -149,6 +149,58 @@ public class FileuploadController {
 		boolean removed = svc.remove(num);
 		map.put("removed", removed);
 		return map;
+	}
+	
+	@GetMapping("/delete3/{num}")
+	@ResponseBody
+	public Map<String, Boolean> delete(HttpServletRequest request, @PathVariable("num") int num) throws Exception {
+		boolean deleted = svc.delete3(request, num);
+		System.out.println(deleted);
+		Map<String, Boolean> map = new HashMap<>();
+		map.put("deleted", deleted);
+		return map;
+	}
+	
+	@PostMapping("/update")
+	@ResponseBody
+	public String update(@RequestParam("files") MultipartFile[] mfiles, HttpServletRequest request,
+			@RequestParam(name="pnum", defaultValue = "0") int pnum,
+			Fileupload vo) {
+		
+		System.out.println("pnum = " + pnum);
+		ServletContext context = request.getServletContext();
+		String savePath = context.getRealPath("/WEB-INF/files");
+
+		vo.setFpath(savePath);
+
+		List<AttachVO> attList = new ArrayList<>();
+		
+		boolean updated = false;
+		try {
+
+			for (int i = 0; i < mfiles.length; i++) {
+				String[] token = mfiles[i].getOriginalFilename().split("\\.");
+				String fname_changed = token[0] + System.nanoTime() + "." + token[1];
+				
+				AttachVO att = new AttachVO();
+				att.setPnum(pnum);
+				att.setFpath(savePath);
+				att.setFname(fname_changed);
+				attList.add(att);
+
+				mfiles[i].transferTo( // 메모리에 있는 파일을 저장경로에 옮기는 method, local 디렉토리에 있는 그 파일만 셀렉가능
+						new File(savePath + "/" + fname_changed));
+			}
+			vo.setNum(pnum);
+			vo.setAttach(attList);
+			updated = svc.insert(vo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			updated = false;
+		}
+		System.out.println(updated);
+		return "{\"updated\":" + updated + "}";
+		
 	}
 	
 }
