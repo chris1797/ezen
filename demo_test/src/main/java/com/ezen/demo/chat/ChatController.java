@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -44,12 +45,10 @@ public class ChatController
    
 	@PostMapping("/logincheck") //로그인 데이터를 받겠다.
 	@ResponseBody
-	public Map<String,Object> logincheck(User user, Model model) {
-		boolean logincheck = user.getUid() != null ? true : false; 
+	public Map<String,Object> logincheck(@RequestParam("uid") String uid, Model model) {
+		boolean logincheck = uid != null ? true : false; 
 		
-		model.addAttribute("uid", user.getUid());
-		String uid = (String) model.getAttribute("uid");
-		System.out.println("Controller : " + uid);
+		model.addAttribute("uid", uid);
 		
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("logincheck", logincheck);

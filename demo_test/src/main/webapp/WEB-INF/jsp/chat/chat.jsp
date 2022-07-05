@@ -6,6 +6,8 @@
 <title>웹소켓 테스트 페이지</title>
 <script type="text/javascript">
 var g_webSocket = null;
+var uid='${uid}';
+
 window.onload = function() 
 {
 	//on~는 시스템함수로, 꼭 써줘야 하는것이고, 그 안에 사용자핸들러는 개발자가 작성
@@ -16,20 +18,21 @@ window.onload = function()
     
     
     /* 웹소켓 접속 성공시 실행 */
+    //이벤트가 발생되면 실행될 기능들을 정의
     g_webSocket.onopen = function(message) {
+    	//onopen 상황이 되면 돌아가는 것
         addLineToChatBox("Server is connected.");
     };
     
     
     /* 웹소켓 서버로부터 메시지 수신시 실행 */
     g_webSocket.onmessage = function(message) {
-    	
     	var obj = JSON.parse(message.data);
-    	if(obj.uid) {
-    		uid = obj.uid;
-    	}
     	
-        addLineToChatBox(message.data);
+    	var sender = obj.from;
+    	var contents = obj.contents;
+    	
+    	addLineToChatBox('['+sender+']' + contents);
     };
 
     /* 웹소켓 이용자가 연결을 해제하는 경우 실행 */
@@ -63,13 +66,13 @@ function addLineToChatBox(_line)
 /* Send 버튼 클릭하면 서버로 메시지 전송 */
 function sendButton_onclick() {
     var inputMsgBox = document.getElementById("inputMsgBox"); //제이쿼리로 한다면 $('#inputMsgBox')
+    var sendtoBox = document.getElementById("sendtoBox"); // $('#sondtoBox').val();
     
     //box가 없거나, 값이 없을 때 false
     if (inputMsgBox == null || inputMsgBox.value == null || inputMsgBox.value.length == 0) {
         return false;
     }
     
-    var jsStr = JSON.stringify(obj);
     var chatBoxArea = document.getElementById("chatBoxArea"); //채팅 메세지가 돌아가는 곳
     
     //소켓이 쓸 준비가 되지 않았으면, false
@@ -80,7 +83,13 @@ function sendButton_onclick() {
     
     // 서버로 메시지 전송
     // g_webSocket은 서버
-    g_webSocket.send(inputMsgBox.value); // 서버로 값을 보내고
+    var msg = {};
+    msg.from = uid;
+    msg.to = sendtoBox.value;
+    msg.contents = inputMsgBox.value;
+    
+ // 서버로 값을 보내고
+    g_webSocket.send(JSON.stringify(msg)); // '{\"key":\"value\"}'
     inputMsgBox.value = ""; // 값을 다시 비우고
     inputMsgBox.focus(); // 다시 입력할 수 있도록 focus
     
@@ -120,6 +129,7 @@ function inputMsgBox_onkeypress() {
 </head>
 <body>
     <input id="inputMsgBox" style="width: 250px;" type="text" onkeypress="inputMsgBox_onkeypress()">
+    To <input id="sendtoBox" name="to" style="width: 80px;" type="text">
     <input id="sendButton" value="Send" type="button" onclick="sendButton_onclick()">
     <input id="disconnectButton" value="Disconnect" type="button" onclick="disconnectButton_onclick()">
     <br/>

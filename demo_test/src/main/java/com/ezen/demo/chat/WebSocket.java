@@ -55,20 +55,20 @@ public class WebSocket
 //            sessionList.add(session);
             
             Map<String, String> map = new HashMap<>();
-            map.put("uid", uid);
+            map.put("from", uid);
             map.put("contents", "Connected");
             
             // Map에다 담아서 JSON문자열을 내려보내 준다는 뜻
             try {
             	String jsStr = new ObjectMapper().writeValueAsString(map);
-            	sendMessageToAll(jsStr.strip());
+            	sendMessageToAll(jsStr);
             } catch (JsonProcessingException e) {
             	e.printStackTrace();
             }
             
             
             /* 웹소켓에 접속한 모든 이용자에게 메시지 전송 */
-            sendMessageToAll("--> [USER-" + sessionId + "(" + uid + ")" + "] is connected. ");
+//            sendMessageToAll("--> [USER-" + sessionId + "(" + uid + ")" + "] is connected. ");
             //현재 접속중인 모든 user들에게 해당 메세지 전송
         }
     }
@@ -77,34 +77,51 @@ public class WebSocket
     // 해당 Annotation이 꼭 @OnMessage여야 함
     @OnMessage
     public String handleMessage(String message, Session session) { //반드시 두 파라미터가 있어야 함
-        if (session != null) {
-            String sessionId = session.getId();
-            System.out.println("getId : " + session.getId());
-            System.out.println("message is arrived. sessionId == [" + sessionId + "] / message == [" + message + "]");
+       
+    	if (session != null) {
+            //System.out.println("getId : " + session.getId());
+            String uid = getUserBySession(session);
+            System.out.println(message);
+            System.out.println("message is arrived. sessionId == [" + uid + "] / message == [" + message + "]");
+            
+            Map<String, String> map1 = null;
+            ObjectMapper mapper = new ObjectMapper();
+            
+			try {
+				map1 = mapper.readValue(message, Map.class);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+            
+            String sendkey = map1.get("to");
+            Session sendss = sessionMap.get(sendkey);
             
             Set<String> keys = sessionMap.keySet();
             Iterator<String> itr = keys.iterator();
-            String uid = getUserBySession(session);
             
-            while(itr.hasNext()) {
-            	String key = itr.next();
-            	Session ss = sessionMap.get(key);
-            	
-            	if(ss == null) {
-            		continue;
+            Map<String, String> map = new HashMap<>();
+            map.put("from", uid);
+            map.put("contents", message);
+            
+            if(sendss != null) {
+            	while(itr.hasNext()) {
+            		String key = itr.next();
+            		Session ss = sessionMap.get(key);
+            		if(key == sendkey) {
+            			sendss = sessionMap.get(sendkey);
+            			map.put("to", sendkey);
+            		}
+            		if(ss == null || !ss.isOpen()) {
+            			continue;
+            		}
             	}
-            	if(!ss.isOpen()) {
-            		continue;
-            	}
-            	
-//            	if(session == ss ) {  //이게 핵심이다. 이거 대신 getUserBySession()을 쓴 것
-//            		uid = key;
-//            		break;
-//            	}
+            	session.getAsyncRemote().sendText(message);
+            	sendss.getAsyncRemote().sendText(message);
+            } else {
+            	sendMessageToAll(message);
             }
-            
             /* 웹소켓에 접속한 모든 이용자에게 메시지 전송 */
-            sendMessageToAll("[USER-" + sessionId + "(" + uid + ")" + "] " + message);
+//            sendMessageToAll("[USER-"  + uid + "] " + message);
         }
         
         return null;
@@ -120,7 +137,18 @@ public class WebSocket
             System.out.println("client is disconnected. sessionId == [" + sessionId + "]");
             
             /* 웹소켓에 접속한 모든 이용자에게 메시지 전송 */
-            sendMessageToAll("***** [USER-" + uid + "] is disconnected. *****");
+            //sendMessageToAll("***** [USER-" + uid + "] is disconnected. *****");
+            Map<String, String> map = new HashMap<>();
+            map.put("uid", uid);
+            map.put("contents", "disconnected");
+            
+            // Map에다 담아서 JSON문자열을 내려보내 준다는 뜻
+            try {
+            	String jsStr = new ObjectMapper().writeValueAsString(map);
+            	sendMessageToAll(jsStr);
+            } catch (JsonProcessingException e) {
+            	e.printStackTrace();
+            }
         }
     }
 
