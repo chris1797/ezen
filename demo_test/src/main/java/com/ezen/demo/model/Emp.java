@@ -1,19 +1,29 @@
 package com.ezen.demo.model;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 @Component
 public class Emp 
 {
-   public int empno;
-   public String ename;
-   public java.sql.Date hiredate;
-   public float sal;
-   public int deptno;
+   private int empno;
+   private String ename;
+   private java.sql.Date hiredate;
+   private float sal;
+   private int deptno;
+   
+   private List<Emp> list;
 
    @Override
    public String toString() {
-      return String.format("%d\t%s\t%s\t%f", empno,ename,hiredate,sal);
+	   return String.format("%d\t%s\t%s\t%f", empno,ename,hiredate,sal);
+   }
+   public List<Emp> getList() {
+	   return list;
+   }
+   public void setList(List<Emp> list) {
+	   this.list = list;
    }
    public int getEmpno() {
       return empno;

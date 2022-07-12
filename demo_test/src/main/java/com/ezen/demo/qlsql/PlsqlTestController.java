@@ -1,5 +1,9 @@
 package com.ezen.demo.qlsql;
 
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -10,8 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ezen.demo.model.Emp;
+
 @RestController
-@RequestMapping("/plsql")
+@RequestMapping("/plsql") // 이 안에 있는건 자동으로 ResponseBody가 됨
 public class PlsqlTestController {
 	
 //	private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -38,10 +44,55 @@ public class PlsqlTestController {
 		return map;
 	}
 	
-	@GetMapping("/ename/{empno}")
-	public Map<String, Object> ename_by_empno(@PathVariable("empno") int empno) {
-		Map<String, Object> map = svc.getEnameByEmpno(empno);
-		logger.info("서비스에서 리턴한 값: {}", map);
-		return map;
+//	@GetMapping("/ename/{empno}")
+//	public Map<String, Object> ename_by_empno(@PathVariable("empno") int empno) {
+//		Map<String, Object> map = svc.getEnameByEmpno(empno);
+//		logger.info("서비스에서 리턴한 값: {}", map);
+//		return map;
+//	}
+	
+	@GetMapping("/emp/{deptno}")
+	public String getEmpByDeptno(@PathVariable("deptno") int deptno) {
+		List<Emp> list = svc.getEmpByDeptno(deptno);
+		
+		return list.toString();
+	}
+	
+	@GetMapping("/empyear/{year}")
+	public String getEmpByYear(@PathVariable("year") int year) {
+		List<Emp> list = svc.getEmpByYear(year);
+		
+		return list.toString();
+	}
+	
+	@GetMapping("/ename2/{empno}")
+	public String getEnameByEmpno(@PathVariable("empno") int empno) {
+		Map<String, Object> map = new HashMap<>();
+		map = svc.getEnameByEmpno3(empno);
+		
+		return map.get("ename").toString();
+	}
+	
+	@GetMapping("/emp2/{empno}")
+	public String getEmpByEmpno(@PathVariable("empno") int empno) {
+		Map<String, Object> map = new HashMap<>();
+		map = svc.getEmpByEmpno(empno);
+
+		return map.toString();
+	}
+	
+	@GetMapping("/emp/vo/{empno}")
+	public String getEmpByEmpno2(@PathVariable("empno") int empno) {
+		Emp emp = new Emp();
+		emp = svc.getEmpByEmpno2(empno);
+
+		return emp.toString();
+	}
+	
+	@GetMapping("/empcursor/{deptno}")
+	public String getEmpByDeptno2(@PathVariable("deptno") int deptno) {
+		Emp emp = new Emp();
+		emp = svc.getEmpByDeptno2(deptno);
+		return emp.getList().toString();
 	}
 }

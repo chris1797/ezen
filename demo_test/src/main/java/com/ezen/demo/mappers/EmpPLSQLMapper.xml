@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ezen.demo.mappers.EmpPLSQLMapper">
+	
+	<!-- resultMap=empMap의 정의 -->
+	<resultMap id="empMap" type="hashmap"/>
+	<resultMap type="com.ezen.demo.model.Emp" id="empvo">
+		<result property="empno" column="empno"/>
+		<result property="ename" column="ename"/>
+		<result property="deptno" column="deptno"/>
+		<result property="hiredate" column="hiredate"/>
+	</resultMap>
+	
+	<!-- void이기 때문에 resultType이 아닌 parameterType으로 씀 -->
+	<select id="getEnameByEmpno" statementType="CALLABLE" parameterType="map"> 
+		{
+			CALL ename_by_empno(
+				#{empno}, <!-- 입력 파라미터, Map의 key -->
+				#{ename, mode=OUT, jdbcType=VARCHAR, javaType=String, resultMap=empMap } <!-- 출력 파라미터 -->
+				<!-- map에 있는 "ename" key를 만들고 프로시저의 아웃파라미터 String을 집어 넣는다.-->
+			)
+		}
+	</select>
+	
+	
+	<select id="getEmpByEmpno" statementType="CALLABLE" parameterType="map"> 
+		{
+			CALL emp_by_empno(
+				#{empno}, <!-- 입력 파라미터, Map의 key -->
+				#{empno_out, mode=OUT, jdbcType=NUMERIC, javaType=INTEGER, resultMap=empMap }, <!-- 출력 파라미터 -->
+				#{ename, mode=OUT, jdbcType=VARCHAR, javaType=String, resultMap=empMap },
+				#{hiredate, mode=OUT, jdbcType=DATE, javaType=Date, resultMap=empMap }
+			)
+		}
+	</select>
+	
+	<select id="getEmpByEmpno2" statementType="CALLABLE" parameterType="com.ezen.demo.model.Emp"> 
+		{
+			CALL emp_by_empno2(
+				#{empno}, <!-- 입력 파라미터, Map의 key -->
+				#{empno, mode=OUT, jdbcType=NUMERIC, javaType=INTEGER, resultMap=empvo }, <!-- 출력 파라미터 -->
+				#{deptno, mode=OUT, jdbcType=NUMERIC, javaType=INTEGER, resultMap=empvo },
+				#{ename, mode=OUT, jdbcType=VARCHAR, javaType=String, resultMap=empvo },
+				#{hiredate, mode=OUT, jdbcType=DATE, javaType=java.sql.Date, resultMap=empvo }
+			)
+		}
+	</select>
+	
+	
+	<select id="getEmpByDeptno" statementType="CALLABLE" parameterType="com.ezen.demo.model.Emp"> 
+		{
+			CALL emp_by_deptno(
+				#{deptno},
+				#{list, mode=OUT, jdbcType=CURSOR, javaType=ResultSet, resultMap=empvo }
+				<!-- emplist는 Map의 key -->
+			)
+		}
+	</select>
+	
+
+</mapper>
