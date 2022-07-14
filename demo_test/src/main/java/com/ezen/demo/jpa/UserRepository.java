@@ -16,6 +16,7 @@ public interface UserRepository extends JpaRepository<User, Integer>{
 	
 	List<User> findByUnameAndEmail(String uname, String email);
 	
+	
 	//num값이 5~10 사이에 있는 행을 추출하려고 한다. 우리가 만든 메소드에 우리가 만든 쿼리문을 넣은 것
 	@Query("SELECT u FROM User u WHERE u.num BETWEEN ?1 AND ?2") // JPQL, 이름은 아무렇게나 써도 상관없음
 	List<User> findAllNumBet(@Param("start") int start, @Param("end")int end); // named parameter

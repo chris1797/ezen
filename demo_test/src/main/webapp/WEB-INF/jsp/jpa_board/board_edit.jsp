@@ -10,14 +10,14 @@
 <script type="text/javascript">
 	function edit() {
 		$.ajax({
-			url:'/jdbc/board/update/${board.num}',
+			url:'/jpaboard/update',
 			method:'post',
 			cache:false,
 			data:$('#edit_form').serialize(),
 			dataType:'json',
 			success:function(res){ //res는 object
-					alert(res.updated ? '수정 성공' : 'Failed'); //res object 안에있는 num
-					location.href="/jdbc/board/list";
+					alert(res.updated ? '수정 성공' : '수정실패'); //res object 안에있는 num
+					location.href="/jpaboard/list";
 			},
 			error:function(xhr,status,err){
 				alert(err);
@@ -44,7 +44,7 @@
 <hr>
 <table>
 <form id="edit_form" onsubmit="return edit();">
-
+<input type="hidden" id="num" name="num" value="${board.num}">
 <tr><th>번호</th><td>${board.num}</td>
 	<th>제목</th><td><input type="text" name="title" value="${board.title}"></td></tr>
 	<tr><th>작성자</th><td>${board.author}</td><th>작성일</th><td>${board.wdate}</td></tr>
@@ -54,7 +54,7 @@
 </form>
 <br>
 <footer>
-	[<a href="/jdbc/board/list">글목록</a>] &nbsp;&nbsp;
+	[<a href="/jpaboard/list">글목록</a>] &nbsp;&nbsp;
 </footer>
 </main>
 </body>

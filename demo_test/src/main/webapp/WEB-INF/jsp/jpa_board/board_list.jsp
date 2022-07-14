@@ -32,15 +32,15 @@
 	</tr>
 <c:forEach var="board" items="${list}">
 	<tr>
-		<td><a href="/jpaboard/detail/${board.num}">${board.num}</a></td>
-		<td>${board.title}</td>
+		<td>${board.num}</td>
+		<td><a href="/jpaboard/detail/${board.num}">${board.title}</a></td>
 		<td>${board.author}</td>
 		<td>${board.wdate}</td>
 	</tr>
 </c:forEach>
 </table>
 <footer>
-[<a href="/jpaboard/write_form">글쓰기</a>]
+[<a href="/jpaboard/inputform">글쓰기</a>]
 </footer>
 </main>
 </body>

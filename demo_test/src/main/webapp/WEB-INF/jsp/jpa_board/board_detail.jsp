@@ -10,13 +10,13 @@
 <script type="text/javascript">
 	function remove(){
 		$.ajax({
-			url:'/jdbc/board/remove/${board.num}',
+			url:'/jpaboard/remove/${board.num}',
 			method:'post',
 			cache:false,
 			dataType:'json',
 			success:function(res){ //res는 object
 					alert(res.removed ? '삭제성공' : 'Failed'); //res object 안에있는 num
-					location.href="/jdbc/board/list";
+					location.href="/jpaboard/list";
 			},
 			error:function(xhr,status,err){
 				alert(err);
@@ -48,8 +48,8 @@
 </table>
 <br>
 <footer>
-	[<a href="/jdbc/board/list">글목록</a>] &nbsp;&nbsp;
-	[<a href="/jdbc/board/edit/${board.num}">수정</a>] &nbsp;&nbsp;
+	[<a href="/jpaboard/list">글목록</a>] &nbsp;&nbsp;
+	[<a href="/jpaboard/editform/${board.num}">수정</a>] &nbsp;&nbsp;
 	[<a href="javascript:remove();">삭제</a>]
 	[<a href="board?cmd=inputform&pcode=${board.num}">답글쓰기</a>]
 </footer>

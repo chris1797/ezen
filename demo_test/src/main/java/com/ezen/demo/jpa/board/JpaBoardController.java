@@ -4,8 +4,6 @@ import java.sql.Date;
 import java.util.*;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,20 +14,23 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 @RequestMapping("/jpaboard")
 public class JpaBoardController {
 	
-	final Logger logger = LoggerFactory.getLogger(getClass());
+//	test에 활용
+//	log.trace("list={}", list.toString());
 
 	long miliseconds = System.currentTimeMillis();
     Date date = new Date(miliseconds);
 	
-	
 	@Autowired
-	private BoardRepository BoardRepository; //JPA가 구현해놓은 객체
+	private JpaBoardService svc;
+	
 	
 	@GetMapping("")
 	public String jpaTest() {
@@ -41,18 +42,64 @@ public class JpaBoardController {
 		return "/jpa_board/board_inputform";
 	}
 	
-	@PostMapping("/save")
+	@PostMapping("/add")
 	@ResponseBody
-	public ResponseEntity<Boolean> saveBoard(Board board) {
-		Board _board = new Board();
-		_board.setTitle(board.getTitle());
-		_board.setContents(board.getContents());
-		_board.setWdate(date);
-		Board savedBoard = BoardRepository.save(board); // 레코드 추가 (한 행 추가)
-		boolean saved = board.getNum() == savedBoard.getNum();
-		System.out.println(saved);
-		return new ResponseEntity<>(saved, HttpStatus.OK); 
+	public Map<String, Object> add(Board board) {
+		Map<String, Object> map = new HashMap<>();
+		
+		boolean added = svc.add(board); // 레코드 추가 (한 행 추가)
+		map.put("added", added);
+		
+		return map;
 	}
+	
+	@GetMapping("/list")
+	public String list(Model model) {
+		List<Board> list = svc.getList();
+		
+		model.addAttribute("list", list);
+		return "jpa_board/board_list";
+	}
+	
+	@PostMapping("/remove/{num}")
+	@ResponseBody
+	public Map<String, Object> delete(@PathVariable("num") int num) {
+		Map<String, Object> map = new HashMap<>();
+		
+		boolean removed = svc.remove(num);
+		map.put("removed", removed);
+		
+		return map;
+	}
+	
+	@GetMapping("/detail/{num}")
+	public String detail(@PathVariable("num") int num, Model model) {
+		Board board = svc.findByNum(num);
+		
+		model.addAttribute("board", board);
+		return "/jpa_board/board_detail";
+	}
+	
+	@GetMapping("/editform/{num}")
+	public String editform(@PathVariable("num") int num, Model model) {
+		Board board = svc.findByNum(num);
+		
+		model.addAttribute("board", board);
+		return "/jpa_board/board_edit";
+	}
+	
+	@PostMapping("/update")
+	@ResponseBody
+	public Map<String, Object> update(Board board) {
+		log.trace(board.toString());
+		Map<String, Object> map = new HashMap<>();
+		
+		boolean updated = svc.update(board);
+		map.put("updated", updated);
+		
+		return map;
+	}
+	
 	/*
 	
 	@GetMapping("/findAll")
@@ -104,19 +151,9 @@ public class JpaBoardController {
 		
 		return new ResponseEntity<>(savedBoard, HttpStatus.OK); 
 	}
+	*/
 	
-	@GetMapping("/delete/{num}")
-	public String delete(@PathVariable("num") int num) {
-		
-		Optional<Board> op = BoardRepository.findById(num);
-		
-		if(op.isPresent()) {
-			BoardRepository.deleteById(num);
-			return "삭제 성공";
-		} else {
-			return "삭제 실패";
-		}
-	}
+	/*
 	@GetMapping("/jpql/{start}/{end}")
 	public ResponseEntity<List<Board>> getAllBet(@PathVariable("start") int start,
 												@PathVariable("start") int end) {

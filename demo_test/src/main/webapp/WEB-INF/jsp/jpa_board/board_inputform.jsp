@@ -21,13 +21,14 @@
 <script type="text/javascript">
 function save() {
 	$.ajax({
-		url:'/jpaboard/save',
+		url:'/jpaboard/add',
 		method:'post',
 		cache:false,
 		data:$('#input_form').serialize(),
 		dataType:'json',
 		success:function(res){ //res는 object
-				alert(res.saved ? '저장성공' : '저장실패'); //res object 안에있는 num
+				alert(res.added ? '저장성공' : '저장실패'); //res object 안에있는 num
+				location.href="/jpaboard/list";
 		},
 		error:function(xhr,status,err){
 			alert(err);
@@ -42,7 +43,7 @@ function save() {
 <h3>글작성</h3>
 <hr>
 <br>
-<form id="input_form" method="post" action="/jpaboard/save" onsubmit="return save();">
+<form id="input_form" method="post" action="/jpaboard/add" onsubmit="return save();">
 <!-- <input type="hidden" name="pcode" value="${board.pcode}">  -->
 <div>제목 : <input type="text" id="title" name="title"></div>
 <div>내용 : <input type="text" id="contents" name="contents"></div>
@@ -50,7 +51,7 @@ function save() {
 <hr>
 <div align="center">
 	<button type="submit">작성</button>
-	<button><a href="?cmd=list">글목록</a></button>
+	<button><a href="/jpaboard/list">글목록</a></button>
 </div>
 </form>
 </main>
