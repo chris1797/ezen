@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +22,30 @@ public class JpaBoardService {
 	private BoardRepository boardRepository; //JPA가 구현해놓은 객체
 
 	
-	public List<Board> getList() {
-		List<Board> list = boardRepository.findAll();
+	public Page<Board> getList(Pageable pageable) {
+		//List<Board> list = boardRepository.findAll();
+		Page<Board> pageInfo = boardRepository.findAll(pageable);
 		
-		return list;
+		return pageInfo;
+	}
+	
+	public int[] getLinkRange(Page<Board> pageInfo) {
+		int start = 0;
+		int end = 0;
+
+		if (pageInfo.getNumber() - 2 < 0) {
+			start = 0;
+		} else {
+			start = pageInfo.getNumber() - 2;
+		}
+
+		if (pageInfo.getTotalPages() < (start + 4)) {
+			end = pageInfo.getTotalPages();
+			start = (end - 4) < 0 ? 0 : (end - 4);
+		} else {
+			end = start + 4;
+		}
+		return new int[] { start, end };
 	}
 
 

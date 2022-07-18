@@ -21,6 +21,7 @@
 	tr:hover { background-color: highlight; }
 	footer { width:fit-content; margin:5px auto; }
 	a { text-decoration: none;  }
+	span { color: red;}
 </style>
 </head>
 <body>
@@ -40,6 +41,12 @@
 </c:forEach>
 </table>
 <footer>
+	<c:forEach var="i" begin="${start}" end="${end}">
+		<a href="/jpaboard/list?page=${i}&size=2&sort=num,desc&sort=num,desc&sort=author,asc">
+			<c:if test="${i==pageInfo.number }"><span>${i+1}</span></c:if>
+			<c:if test="${i!=pageInfo.number }">${i+1}</c:if>
+		</a>
+	</c:forEach>
 [<a href="/jpaboard/inputform">글쓰기</a>]
 </footer>
 </main>

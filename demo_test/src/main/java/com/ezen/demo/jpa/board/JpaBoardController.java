@@ -2,9 +2,10 @@ package com.ezen.demo.jpa.board;
 
 import java.sql.Date;
 import java.util.*;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -54,10 +55,16 @@ public class JpaBoardController {
 	}
 	
 	@GetMapping("/list")
-	public String list(Model model) {
-		List<Board> list = svc.getList();
+	public String list(Pageable pageable, Model model) {
+		Page<Board> pageInfo = svc.getList(pageable);
+		List<Board> list = pageInfo.getContent();
+		
+		int[] linkRange = svc.getLinkRange(pageInfo);
 		
 		model.addAttribute("list", list);
+		model.addAttribute("pageInfo", pageInfo);
+		model.addAttribute("start", linkRange[0]);
+		model.addAttribute("end", linkRange[1]);
 		return "jpa_board/board_list";
 	}
 	
