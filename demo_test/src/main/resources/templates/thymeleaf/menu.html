@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<h3> input Page </h3>
+
+<!-- <a th:href="@{'/th/'+${list}">클릭</a> -->
+
+<form method="post" th:action="@{/th/save}">
+	<div><label>번호 <input type="text" name="empno"></label></div>
+	<div><label>이름 <input type="text" name="ename"></label></div>
+	<div><label>부서 <input type="text" name="deptno"></label></div>
+	<div><label>급여 <input type="text" name="sal"></label></div>
+	<div>
+		<button type="submit">Save</button>
+		<button type="reset">Cancel</button>
+	</div>
+</form>
+</body>
+</html>

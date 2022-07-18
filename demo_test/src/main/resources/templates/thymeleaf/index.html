@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<h3> Thymeleaf Test </h3>
+Item : <div th:text="${item}"></div> <!-- Variable Expression -->
+<!-- - EMP - 	
+		<div>번호 : <span th:text="${emp.empno}"></span></div>
+		<div>사원명 : <span th:text="${emp.ename}"></span></div>
+		<div>부서번호 : <span th:text="${emp.deptno}"></span></div>
+		<div>직급 : <span th:text="${emp.job}"></span></div>
+		<div>입사연도 : <span th:text="${emp.hiredate}"></span></div>
+		<div>급여 : <span th:text="${emp.sal}"></span></div> -->
+<div>
+	<table>
+		<tr th:each="emp : ${list}">
+			<td th:text="${emp.empno}"></td>
+			<div th:if="${emp.ename}=='이재훈'">
+				<td th:text="${emp.ename}" style="color: red;"></td>
+			</div>
+			<div th:unless="${emp.ename}=='이재훈'">
+				<td th:text="${emp.ename}"></td>
+			</div>
+			<td th:text="${emp.deptno}"></td>
+			<td th:text="${emp.deptno}"></td>
+			<td th:text="${emp.hiredate}"></td>
+		</tr>
+	</table>
+</div>
+
+<div th:if="${user}=='smith'">Hello Smith</div>
+<div th:unless="${user}=='smith'">Hello there</div>
+
+</body>
+</html>

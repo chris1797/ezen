@@ -64,8 +64,7 @@
 		<c:choose>
 			<c:when test="${i==pageInfo.pageNum}">
 				[${i}]
-			</c:when>
-			<c:otherwise>
+			</c:when>			<c:otherwise>
 				[<a href="/mybatis/board/${i}">${i}</a>]
 			</c:otherwise>
 		</c:choose>
