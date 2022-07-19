@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title> Person Detail Page </title>
+</head>
+<body>
+<h3> Person Detail Page </h3>
+
+<!-- <a th:href="@{'/th/'+${list}">클릭</a> -->
+
+<form method="Post" th:action="@{/person/update}" th:object="${person}">
+<input type="hidden" name="num" th:field="*{num}">
+	<div><label>Name <input type="text" name="name" th:field="*{name}"></label></div>
+	<div><label>E-mail <input type="text" name="email" th:field="*{email}"></label></div>
+	<div><label>Age <input type="text" name="age" th:field="*{age}"></label>
+		<span th:if="${msg}!=''">
+				<span th:text="${msg}" style="color: red;"></span>
+		</span>
+	</div>
+	<div>
+		<button><a th:text="Delete" th:href="@{'/person/delete/'+ ${person.num}}"></a></button>
+		<button type="submit">Save</button>
+		<button type="reset">Cancel</button>
+	</div>
+</form>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Thymeleaf 사용하기</title>
+</head>
+<body>
+<h3>Thymeleaf 사용하기</h3>
+
+<div th:text="${sampleData}">DIV1</div>
+
+<input type="text" value="test" th:value="${item}">
+
+<div th:text="'문자열:' + ${msg}"></div>
+<div th:text="'산술:' + (1+1)"></div>
+<div th:text="'비교:' + (5>2)"></div>
+<div th:text="'논리:' + (true and false)"></div>
+<p>속성이 아닌 바디 영역에 동적 데이터 표시하기</p>
+[[${msg}]]
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+
+</script>
+</head>
+<body>
+<h3> input Page </h3>
+
+<!-- <a th:href="@{'/th/'+${list}">클릭</a> -->
+
+<form method="post" th:action="@{/th/save}" th:object="${emp}">
+	<div><label>번호 <input type="text" name="empno" th:field="*{empno}"></label></div>
+	<div><label>이름 <input type="text" name="ename" th:field="*{ename}"></label></div>
+	<div><label>부서 <input type="text" name="deptno" th:field="*{deptno}"></label></div>
+	<div><label>급여 <input type="text" name="sal" th:field="*{sal}"></label>
+		<span th:if="${msg}!=''">
+				<span th:text="${msg}" style="color: red;"></span>
+		</span>
+	</div>
+	<div>
+		<button type="submit">Save</button>
+		<button type="reset">Cancel</button>
+	</div>
+</form>
+</body>
+</html>

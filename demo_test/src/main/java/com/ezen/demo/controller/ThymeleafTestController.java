@@ -5,6 +5,7 @@ import java.util.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -75,12 +76,18 @@ public class ThymeleafTestController {
 	
 	@GetMapping("/input")
 	public String menu(Model model) {
-		return "thymeleaf/menu";
+		model.addAttribute("emp", new Emp2()); // form-back bean (폼을 되돌려줄 때 필요한 bean)
+		return "thymeleaf/input";
 	}
 	
 	@PostMapping("/save")
-	@ResponseBody
-	public String save(Emp2 emp) {
+	public String save(@ModelAttribute Emp emp) {
+		if(emp.getSal() >= 5000) {
+			String msg = "급여는 5,000미만이어야 합니다.";
+//			model.addAttribute("msg", msg);
+//			model.addAttribute("emp", emp); @ModelAttribute로 대신
+			return "thymeleaf/input";
+		}
 		log.trace("form data={}", emp);
 		return emp.toString();
 	}

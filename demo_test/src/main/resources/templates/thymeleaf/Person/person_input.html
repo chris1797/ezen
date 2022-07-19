@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title> Person input Page </title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+</script>
+<style type="text/css">
+main {width:fit-content; margin:0 auto; }
+main nav {width:fit-content; margin:1em auto; }
+.err { color:red; }
+label { display:inline-block; width:5em; text-align:right; margin-right:1em; }
+</style>
+</head>
+<body>
+<h3> Person input Page </h3>
+
+<!-- <a th:href="@{'/th/'+${list}">클릭</a> -->
+
+<form method="post" th:action="@{/person/save}" th:object="${person}">
+	<div>
+		<label for="name">Name</label>
+		<input type="text" name="name" th:field="*{name}">
+		<div class="err" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+	</div>
+	<div>
+		<label>E-mail</label>
+		<input type="text" name="email" th:field="*{email}">
+		<div class="err" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+		</div>
+	<div>
+		<label>Age</label>
+		<input type="text" name="age" th:field="*{age}">
+		<div class="err" th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></div>
+	</div>
+	<div>
+		<button type="submit">Save</button>
+		<button type="reset">Cancel</button>
+	</div>
+</form>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Person List</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+</script>
+<style type="text/css">
+	main { width:fit-content; margin:0 auto; }
+	main>h3 { width:fit-content; margin:10px auto; }
+	table { border:1px solid black; width:500px; border-spacing:0; border-collapse: collapse;}
+	th,td { border-right: 1px dashed black; text-align:center;}
+	td {border-right: 1px dashed black; text-align:left;}
+	th:last-child(), td:last-child() { border-right:none; }
+	th {background-color: #7bcabe; border-bottom:3px double black; }
+	tr:nth-child(odd) {background-color:#eee;}
+	tr:hover { background-color: highlight; }
+	footer { width:fit-content; margin:5px auto; }
+	a { text-decoration: none;  }
+	span { color: red;}
+</style>
+</head>
+<body>
+<main>
+<h3>[ 사람 목록 ]</h3>
+<table>
+	<tr>
+		<th>Num</th><th>Name</th><th>Email</th><th>Age</th>
+	</tr>
+	<tr th:each="person : ${list}">
+		<td th:text="${person.num}"></td>
+		<td><a th:text="${person.name}" th:href="@{'/person/detail/'+ ${person.num}}"></a></td>
+		<td th:text="${person.email}"></td>
+		<td th:text="${person.age}">
+			<span th:if="${msg}!=''">
+				<span th:text="${msg}" style="color: red;"></span>
+			</span>
+		</td>
+	</tr>
+</table>
+<footer>
+[<a href="/person/input">추가</a>]
+</footer>
+</main>
+</body>
+</html>
