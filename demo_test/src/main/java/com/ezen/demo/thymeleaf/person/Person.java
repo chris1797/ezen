@@ -30,7 +30,7 @@ public class Person {
 	private int num;
 	
 	@NotEmpty(message="이름은 필수 입력항목입니다.")
-	@Size(min=2, message="이름은 2자 이상입니다.")
+	@Size(min=2, message="{Person.Name.Size}")
 	@Column(name="name")
 	private String name;
 	

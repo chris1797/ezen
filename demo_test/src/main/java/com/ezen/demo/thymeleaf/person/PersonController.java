@@ -13,21 +13,28 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import com.ezen.demo.jpa.board.Board;
 import com.ezen.demo.jpa.board.JpaBoardService;
+import com.ezen.demo.model.User;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequestMapping("/person")
 @Controller
+@SessionAttributes("uid")
 public class PersonController {
 	
 	@Autowired
@@ -56,12 +63,39 @@ public class PersonController {
 	}
 	
 	@PostMapping("/save")
-	public String add(@Valid Person person, BindingResult result) {
+	public String add(@Valid Person person, BindingResult result, Model model) {
 		if(result.hasErrors()) {
-
+			
+			// 1
+//			FieldError ageErr = result.getFieldError("age");
+//			String errMsg = ageErr.getDefaultMessage();
+//			log.error("age error={}", errMsg);
+			
+			// 2
+			List<FieldError> ferrList = result.getFieldErrors();
+			for(int i=0; i<ferrList.size(); i++) {
+				FieldError fe = ferrList.get(i);
+				String fname = fe.getField();
+				String errMsg2 = fe.getDefaultMessage();
+				log.error("{}.{}", fname, errMsg2);
+			}
+			
+			// 3
+//			List<ObjectError> list = result.getAllErrors();
+//			for(int i=0; i<list.size(); i++) {
+//				ObjectError oe = list.get(i);
+//				String errMsg2 = oe.getDefaultMessage();
+//				log.error("{}.{}", i+1, errMsg2);
+//			}
+			
 			return "thymeleaf/Person/person_input";
 		}
-		svc.add(person);
+		try {
+			svc.add(person);
+		} catch(HttpClientErrorException e) {
+			model.addAttribute("msg", "로그인 후에 사용할 수 있습니다.");
+			return "thymeleaf/Person/person_login";
+		}
 		return "redirect:/person/list";
 	}
 	
@@ -82,6 +116,35 @@ public class PersonController {
 	public String delete(@PathVariable("num") int num) {
 		svc.delete(num);
 		return "redirect:/person/list";
+	}
+	
+//================================login check=======================================
+	/*
+	@GetMapping("/login")
+	public String login() {
+		return "thymeleaf/Person/person_login";
+	}
+	
+	@GetMapping("/logout")
+	@ResponseBody
+	public Map<String,Object> logout(SessionStatus status) {
+		status.setComplete();
+		
+		Map<String,Object> map = new HashMap<>();
+		map.put("logout", true);
+		return map;
+	}
+	
+	 */
+	@PostMapping("/logincheck") //로그인 데이터를 받겠다.
+	@ResponseBody
+	public Map<String,Object> logincheck(User user, Model model) {
+		
+		model.addAttribute("uid", user.getUid());
+		
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("logincheck", true);
+		return map;
 	}
 	
 }

@@ -10,7 +10,6 @@
 main {width:fit-content; margin:0 auto; }
 main nav {width:fit-content; margin:1em auto; }
 .err { color:red; }
-label { display:inline-block; width:5em; text-align:right; margin-right:1em; }
 </style>
 </head>
 <body>
@@ -27,12 +26,12 @@ label { display:inline-block; width:5em; text-align:right; margin-right:1em; }
 	<div>
 		<label>E-mail</label>
 		<input type="text" name="email" th:field="*{email}">
-		<div class="err" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+		<span class="err" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
 		</div>
 	<div>
 		<label>Age</label>
 		<input type="text" name="age" th:field="*{age}">
-		<div class="err" th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></div>
+		<span class="err" th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></span>
 	</div>
 	<div>
 		<button type="submit">Save</button>

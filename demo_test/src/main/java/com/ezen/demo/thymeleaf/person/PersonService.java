@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.ezen.demo.jpa.board.Board;
 import com.ezen.demo.jpa.emp2.Emp2;
 import com.ezen.demo.jpa.emp2.emp2Repository;
+import com.ezen.demo.model.User;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -55,11 +56,6 @@ public class PersonService {
 		return personRepository.findByNum(num);
 	}
 	public boolean update(Person person) {
-		System.out.println(person.getNum());
-		System.out.println(person.getName());
-		System.out.println(person.getEmail());
-		System.out.println(person.getAge());
-		
 		return 0 < personRepository.update(person.getNum(), person.getName(), person.getEmail(), person.getAge());
 	}
 	public void delete(int num) {
