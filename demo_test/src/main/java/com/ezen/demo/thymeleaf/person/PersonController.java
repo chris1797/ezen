@@ -1,13 +1,17 @@
 package com.ezen.demo.thymeleaf.person;
 
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionListener;
 import javax.validation.Valid;
 
 import org.hibernate.result.ResultSetOutput;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -35,10 +39,16 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/person")
 @Controller
 @SessionAttributes("uid")
+@ServletComponentScan
 public class PersonController {
+	
+	HttpSession session;
 	
 	@Autowired
 	private PersonService svc;
+	
+	@Autowired
+	private UserTrackRepository userTrackRepository;
 	
 
 	@GetMapping("/list")
@@ -119,7 +129,6 @@ public class PersonController {
 	}
 	
 //================================login check=======================================
-	/*
 	@GetMapping("/login")
 	public String login() {
 		return "thymeleaf/Person/person_login";
@@ -128,6 +137,7 @@ public class PersonController {
 	@GetMapping("/logout")
 	@ResponseBody
 	public Map<String,Object> logout(SessionStatus status) {
+		session.invalidate();
 		status.setComplete();
 		
 		Map<String,Object> map = new HashMap<>();
@@ -135,11 +145,11 @@ public class PersonController {
 		return map;
 	}
 	
-	 */
+	
 	@PostMapping("/logincheck") //로그인 데이터를 받겠다.
 	@ResponseBody
-	public Map<String,Object> logincheck(User user, Model model) {
-		
+	public Map<String,Object> logincheck(User user, Model model, HttpSession se) {
+		this.session = se;
 		model.addAttribute("uid", user.getUid());
 		
 		Map<String,Object> map = new HashMap<String, Object>();

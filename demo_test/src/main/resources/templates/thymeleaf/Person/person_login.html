@@ -50,6 +50,7 @@
 			dataType:'json',
 			success:function(res){
 				alert(res.logout ? '로그아웃 성공':'로그아웃 실패');
+				location.href="/person/login";
 			},
 			error:function(xhr,status,err){
 				alert(err);

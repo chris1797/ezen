@@ -1,5 +1,7 @@
 package com.ezen.demo.thymeleaf.person;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +20,9 @@ public class PersonService {
 	
 	@Autowired
 	private PersonRepository personRepository;
+	
+	@Autowired
+	private UserTrackRepository userTrackRepository;
 
 //===============================================================================
 	public Page<Person> getList(Pageable pageable) {
@@ -55,11 +60,16 @@ public class PersonService {
 	public Person findByNum(int num) {
 		return personRepository.findByNum(num);
 	}
+	
 	public boolean update(Person person) {
 		return 0 < personRepository.update(person.getNum(), person.getName(), person.getEmail(), person.getAge());
 	}
+	
 	public void delete(int num) {
 		personRepository.deleteById(num);
 	}
 	
+	public void logsave(List<User_Track> t) {
+		userTrackRepository.saveAll(t);
+	}
 }
