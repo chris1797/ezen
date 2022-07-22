@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Message List</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+</script>
+</head>
+<body>
+<h3>Message List</h3>
+
+<table class="table table-hover">
+	<tr>
+		<th>보낸 사람</th><th>받는 사람</th><th>쪽지 내용</th><th>보낸날짜</th>
+	</tr>
+	<tr th:each="m : ${msglist}">
+		<td th:text="${m.fromid}"></td>
+		<td th:text="${m.TOID}"></td>
+		<td th:text="${m.contents}"></td>
+		<td th:text="${m.wdate}"></td>
+	</tr>
+</table>
+<footer>
+<a href="/msg/index">처음으로</a>
+</footer>
+</body>
+</html>

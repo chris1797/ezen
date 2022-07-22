@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionListener;
 import javax.validation.Valid;
@@ -49,6 +50,10 @@ public class PersonController {
 	
 	@Autowired
 	private UserTrackRepository userTrackRepository;
+	
+	@Autowired
+	ServletContext context;
+	
 	
 
 	@GetMapping("/list")
@@ -156,5 +161,14 @@ public class PersonController {
 		map.put("logincheck", true);
 		return map;
 	}
+	
+	@GetMapping("/msg")
+	@ResponseBody
+	public String msg() {
+		String msg =(String) context.getAttribute("msg2");
+		System.out.println(msg);
+		return msg;
+	}
+	
 	
 }
