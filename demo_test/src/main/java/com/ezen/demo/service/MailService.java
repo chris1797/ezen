@@ -24,6 +24,7 @@ import org.springframework.messaging.MessagingException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ezen.demo.mappers.MailMapper;
 import com.ezen.demo.model.Mail;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,9 @@ public class MailService {
 	
 	@Autowired
 	private JavaMailSender sender;
+	
+	@Autowired
+	private MailMapper dao;
 	
 	@Autowired
 	ResourceLoader resourceLoader;
@@ -160,11 +164,64 @@ public class MailService {
 	      return false;
 	}
 	
+	public boolean sendAttachMail2(Mail mail, int empno) {
+		// mail의 속성 : sender, title, contents, file
+		      MimeMessage mimeMessage = sender.createMimeMessage();
+		      
+		      Multipart multipart = new MimeMultipart();
+
+		      try {
+		         InternetAddress[] addressTo = new InternetAddress[1];
+		         addressTo[0] = new InternetAddress(dao.getEmailByEmpno(empno));
+
+		         mimeMessage.setRecipients(Message.RecipientType.TO, addressTo);
+		         
+		         // Title
+		         mimeMessage.setSubject(mail.getTitle());
+		         
+		         // Fill the message
+		         BodyPart messageBodyPart = new MimeBodyPart();
+		         
+		         // Contents
+		         messageBodyPart.setContent(mail.getContents(), "text/html;charset=utf-8");
+		         
+		         // bodypart를 multipart에 추가
+		         multipart.addBodyPart(messageBodyPart);
+		          
+		         // Part two is attachment
+		         messageBodyPart = new MimeBodyPart();
+		         
+		         MultipartFile[] mfiles = mail.getFiles();
+		         for(int i=0; i < mfiles.length; i++) {
+		        	 
+		        	 File file = new File("C:/Users/302-18/git/ezen/demo_test/src/main/webapp/WEB-INF/files/"+mfiles[i].getOriginalFilename());
+		        	 FileDataSource fds = new FileDataSource(file);
+		        	 messageBodyPart.setDataHandler(new DataHandler(fds));
+		        	 String fileName = fds.getName();
+		        	 messageBodyPart.setFileName(fileName);
+		         }
+		         
+		         
+		         multipart.addBodyPart(messageBodyPart);
+		          
+		         // Put parts in message
+		         mimeMessage.setContent(multipart);
+		         
+		         sender.send(mimeMessage);
+		         
+		         return true;
+		      } catch(Exception ex) {
+		         log.error("에러={}", ex);
+		      }
+		      return false;
+		}
+	
 	//====================================================================================//
 	private String getRandomText() {
 		UUID randomUUID = UUID.randomUUID();
 		return randomUUID.toString().replace("-", "");
 	}
+	
 	//====================================================================================//
 	
 }
