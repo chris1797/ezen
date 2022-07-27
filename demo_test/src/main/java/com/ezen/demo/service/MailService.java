@@ -86,6 +86,37 @@ public class MailService {
 	      return false;
 	   }
 	
+		public boolean sendMimeMessage(String email, String code) throws javax.mail.MessagingException {
+			MimeMessage mimeMessage = sender.createMimeMessage();
+
+			try {
+				InternetAddress[] addressTo = new InternetAddress[1];
+				addressTo[0] = new InternetAddress(email);
+
+				mimeMessage.setRecipients(Message.RecipientType.TO, addressTo);
+
+				mimeMessage.setSubject("회원가입 인증 메일");
+
+				mimeMessage.setContent(
+						"<h3>회원가입 인증 메일입니다.</h3>"
+						+"<br>"
+								+"확인을 누르시면 회원가입 페이지로 다시 돌아갑니다."
+						+ "<form id='signup' method='post' action='http://localhost/auth/req'>"
+						+ "<input type='hidden' name='email' value="+ email + ">"
+						+ "<input type='hidden' name='code' value=" + code + ">"
+						+ "<button type='submit'>확인</button>"
+						+ "</form>", "text/html;charset=utf-8");
+//						+ String.format("<a href='http://localhost/auth/req/%s/%s'>확인</a>", email, code), "text/html;charset=utf-8");
+
+				sender.send(mimeMessage);
+				return true;
+			} catch (MessagingException e) {
+				log.error("에러={}", e);
+			}
+
+			return false;
+		}
+	
 	public boolean sendauthMessage() throws javax.mail.MessagingException
 	   {
 	      MimeMessage mimeMessage = sender.createMimeMessage();
@@ -217,7 +248,7 @@ public class MailService {
 		}
 	
 	//====================================================================================//
-	private String getRandomText() {
+	public String getRandomText() {
 		UUID randomUUID = UUID.randomUUID();
 		return randomUUID.toString().replace("-", "");
 	}

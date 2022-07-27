@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+function authmail(){
+	var serData = $('#signup').serialize();
+	$.ajax({
+		url:'/auth/email',
+		method:'post',
+		cache:false,
+		data:serData,
+		dataType:'json',
+		success:function(res){
+			alert(res.send ? "입력하신 주소로 인증메일이 전송되었습니다. 이메일에서 [확인] 링크를 클릭해주세요." : "인증메일 전송 실패");
+			location.href="/auth/form";
+		},
+		error:function(xhr, status, err){
+			alert(err);
+		}
+	});
+	return false;
+}
+
+</script>
+</head>
+<body>
+<h3>Sign-up Form</h3>
+<form id="signup" method="post" onsubmit="return authmail();">
+	<div><label>Email</label>
+	 		<span th:if="${email}==null">
+				<input type="text" name="email">
+			</span>
+			<span th:unless="${email}==null">
+				<input type="text" name="email" th:value="${email}" readonly="readonly">
+			</span>
+			<span th:if="${email}==null">
+				<button href="javascript:authmail();">인증메일 전송</button>
+			</span>
+			<span th:unless="${email}==null">
+				<button href="javascript:authmail();" disabled>인증메일 전송</button>
+			</span>
+	</div>
+		<label>Password</label>
+			<span th:if="${email}==null">
+				<input type="text" name="password" value="이메일 인증 필요" style="color: red;" readonly="readonly">
+			</span>
+			<span th:unless="${email}==null">
+				<input type="text" name="password">
+			</span>
+		<span th:if="${email}!=''">
+				<span th:text="${msg2}" style="color: blue;"></span>
+		</span>
+	<div>
+		<button type="submit">Save</button>
+		<button type="reset">Cancel</button>
+	</div>
+</form>
+</body>
+</html>
