@@ -13,7 +13,7 @@ public class KakaoController {
 	
 	@GetMapping("/form")
 	public String kakaotalk_form(Model model) {
-		String key = "5d4b896c442d65660f8a185b3399fbea";
+		String key = "";
 		String script = "'Kakao.Auth.login({\r\n"
 				+ "			success : function(response) {\r\n"
 				+ "				console.log(response);\r\n"
