@@ -99,8 +99,8 @@ public class KakaoRestTestcontroller {
 	         BufferedWriter bw = new  BufferedWriter(new OutputStreamWriter(conn.getOutputStream())); // Writer: 문자열을 다룸
 	         StringBuilder sb = new StringBuilder();
 	         sb.append("grant_type=authorization_code");
-	         sb.append("&client_id=df843fd23d52978512aca1a41f47df9c"); // 각자의 REST API 키
-	         sb.append("&redirect_uri=http://localhost/kakaomsg/rest/login/oauth"); // 등록된 Redirect URI
+	         sb.append("&client_id="); // 각자의 REST API 키
+	         sb.append("&redirect_uri="); // 등록된 Redirect URI
 	         sb.append("&code=" + auth_code);
 	         
 	         bw.write(sb.toString());
