@@ -46,7 +46,7 @@ public class MailService {
 	public boolean sendSimpleText() {
 		
 	      List<String> receivers = new ArrayList<>();
-	      receivers.add("jaehun6004@naver.com");
+	      receivers.add("");
 
 	      //보낼 이메일들 배열화
 	      String[] arrReceiver = (String[])receivers.toArray(new String[receivers.size()]);
@@ -69,7 +69,7 @@ public class MailService {
 
 	      try {
 	         InternetAddress[] addressTo = new InternetAddress[1];
-	         addressTo[0] = new InternetAddress("jaehun6004@naver.com");
+	         addressTo[0] = new InternetAddress("");
 
 	         mimeMessage.setRecipients(Message.RecipientType.TO, addressTo);
 
@@ -123,7 +123,7 @@ public class MailService {
 
 	      try {
 	         InternetAddress[] addressTo = new InternetAddress[1];
-	         addressTo[0] = new InternetAddress("jaehun6004@naver.com");
+	         addressTo[0] = new InternetAddress("");
 	         
 	         String link = String.format("<a href='http://localhost/mail/auth/%s'>확인</a>", getRandomText());
 
@@ -151,7 +151,7 @@ public class MailService {
 
 	      try {
 	         InternetAddress[] addressTo = new InternetAddress[1];
-	         addressTo[0] = new InternetAddress("jaehun6004@naver.com");
+	         addressTo[0] = new InternetAddress("");
 
 	         mimeMessage.setRecipients(Message.RecipientType.TO, addressTo);
 	         
