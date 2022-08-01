@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class MailReader
 {
-   String pop3Host = "pop.gmail.com";
+   String pop3Host = "";
    String userName = "";
    String password = "";
 
@@ -34,10 +34,10 @@ public class MailReader
    {
        //Set properties
        Properties props = new Properties();
-       props.put("mail.store.protocol", "pop3");
-       props.put("mail.pop3.host", pop3Host);
-       props.put("mail.pop3.port", "995");
-       props.put("mail.pop3.starttls.enable", "true");
+       props.put("mail.store.protocol", "");
+       props.put("mail.pop3.host", );
+       props.put("mail.pop3.port", "");
+       props.put("mail.pop3.starttls.enable", "");
     
        // Get the Session object.
        Session session = Session.getInstance(props);
