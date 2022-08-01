@@ -27,8 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 public class MailReader
 {
    String pop3Host = "pop.gmail.com";
-   String userName = "jaehun6004@gmail.com";
-   String password = "qroiwvixmoucclhm";
+   String userName = "";
+   String password = "";
 
    public void readEmail()
    {
